@@ -13,7 +13,7 @@ export class SignupUsecase {
       ){}
     
     async execute(createUserDto: CreateUserDto) {
-
+        
         return await this.prismaClient.$transaction(async (prisma: PrismaClient) => {
             const prismaUserRepository = new PrismaUserRepository(prisma)
             const prismaRabbitmqOutbox = new PrismaRabbitmqOutbox(prisma)
@@ -25,18 +25,18 @@ export class SignupUsecase {
             if(existingUsername) throw new UsernameAlreadyRegisteredError()
             
             const userEntity = new UserEntity({
-            ...createUserDto
+                ...createUserDto
             })
             await userEntity.encryptPassword(createUserDto.password)
 
             await prismaUserRepository.create(userEntity)
 
             const userCreatedEvent = new UserCreatedEvent({
-            ...userEntity.toJSON()
+                ...userEntity.toJSON()
             })
             await prismaRabbitmqOutbox.publish(userCreatedEvent)
 
-            return {id: userEntity.id};
+            return { id: userEntity.id };
         })
 
     }

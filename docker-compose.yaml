@@ -4,7 +4,7 @@ services:
 
   rabbitmq:
     image: "rabbitmq:3.8-management-alpine"
-    container_name: discord-bot-rabbitmq
+    container_name: nestjs-rabbitmq
     hostname: rabbitmq
     ports:
       - "15672:15672"
@@ -26,7 +26,7 @@ services:
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: micro
+      MYSQL_DATABASE: nestjs
       MYSQL_PASSWORD: password
     ports:
       - "33010:3306"
