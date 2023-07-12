@@ -6,6 +6,8 @@ import { EmailAlreadyRegisteredError, UsernameAlreadyRegisteredError } from './_
 import { UserEntity } from './entities/user.entity';
 import { PrismaUserRepository } from './repositories';
 import { PrismaClient } from '@prisma/client';
+import { UserCreatedEvent } from './events';
+import { PrismaRabbitmqOutbox } from '../@shared/providers';
 
 @Injectable()
 export class UserService {
@@ -18,7 +20,8 @@ export class UserService {
 
     return await this.prismaService.$transaction(async (prisma: PrismaClient) => {
       const prismaUserRepository = new PrismaUserRepository(prisma)
-      
+      const prismaRabbitmqOutbox = new PrismaRabbitmqOutbox(prisma)
+
       const existingEmail = await prismaUserRepository.findByEmail(createUserDto.email)
       if(existingEmail) throw new EmailAlreadyRegisteredError()
       
@@ -31,7 +34,12 @@ export class UserService {
       await userEntity.encryptPassword(createUserDto.password)
   
       await prismaUserRepository.create(userEntity)
-  
+
+      const userCreatedEvent = new UserCreatedEvent({
+        ...userEntity.toJSON()
+      })
+      await prismaRabbitmqOutbox.publish(userCreatedEvent)
+
       return {id: userEntity.id};
     })
 

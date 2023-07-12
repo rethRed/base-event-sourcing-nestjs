@@ -7,7 +7,6 @@ import { UserController } from './user.controller';
   imports: [],
   providers: [
     UserService
-    
   ],
   
 
