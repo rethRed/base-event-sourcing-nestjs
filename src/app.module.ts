@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/user/user.module';
 import { RabbitmqOutboxModule } from './infra/rabbitmq-outbox/rabbitmq-outbox.module';
 import { RabbitModule } from './rabbitmq';
 import { EventSourcingModule } from './infra/event-sourcing/event-sourcing.module';
@@ -9,7 +9,7 @@ import { EventSourcingModule } from './infra/event-sourcing/event-sourcing.modul
   imports: [
     RabbitModule,
     PrismaModule,
-    UserModule,
+    AuthModule,
     RabbitmqOutboxModule,
     EventSourcingModule,
   ],
