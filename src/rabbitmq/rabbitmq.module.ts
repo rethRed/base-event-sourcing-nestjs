@@ -11,10 +11,10 @@ import { ConsumeMessage } from 'amqplib';
       uri: process.env.RABBITMQ_LOGIN_CREDENTIALS,
       connectionInitOptions: { wait: true },
       enableControllerDiscovery: true,
-      deserializer: (message: Buffer) => {
-        const decodedMessage = JSON.parse(message.toString('utf-8'))
-        return decodedMessage;
-      },
+      // deserializer: (message: Buffer) => {
+      //   // const decodedMessage = JSON.parse(message.toString('utf-8'))
+      //   // return decodedMessage;
+      // },
     }),
   ],
   exports: [ RabbitMQModule ],

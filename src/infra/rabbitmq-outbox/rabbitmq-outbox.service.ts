@@ -4,6 +4,8 @@ import { MysqlResponseInterface } from '../services/mysql-consumer/interfaces';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { PrismaRabbitmqOutbox } from 'src/modules/@shared/providers';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OutboxRecord } from './interface';
+import { PublishEventRabbitmqService } from './publish-event-rabbitmq.service';
 
 @Controller()
 export class RabbitmqOutboxService implements OnModuleInit {
@@ -12,6 +14,7 @@ export class RabbitmqOutboxService implements OnModuleInit {
         private readonly mysqlConsumerService: MysqlConsumerService,
         private readonly amqpConnection: AmqpConnection,
         private readonly prismaService: PrismaService,
+        private readonly publishEventRabbitmqService: PublishEventRabbitmqService
     ){}
 
     async onModuleInit() {
@@ -25,28 +28,9 @@ export class RabbitmqOutboxService implements OnModuleInit {
     }
 
     async handleEvents(events: MysqlResponseInterface) {
-        events.affectedRows.map(async (event) => {
-            const { id, topic, eventName, eventSchemaData } = event.after as RabbitmqOutboxService.OutboxRecord
-            
-            const eventSchemaDataParsed = JSON.parse(eventSchemaData)
-            await this.amqpConnection.publish(topic, eventName, eventSchemaDataParsed)
-            await this.amqpConnection.publish("eventSourcing", "", eventSchemaDataParsed) 
-
-            const prismaRabbitmqOutbox = new PrismaRabbitmqOutbox(this.prismaService)
-            await prismaRabbitmqOutbox.remove(id)
+        events.affectedRows.map(async (record) => {
+            const event = record.after as OutboxRecord
+            this.publishEventRabbitmqService.publish(event)
         })
-    }
-}
-
-
-export namespace RabbitmqOutboxService {
-    export type OutboxRecord = {
-        id: string
-        eventName: string
-        eventSchemaData: string
-        topic: string
-        retry_count: number
-        error_message: string
-        payload: any
     }
 }

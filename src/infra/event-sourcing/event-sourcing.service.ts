@@ -20,7 +20,9 @@ export class EventSourcingService {
         queue:  EventSourcingService.consumerName
       })
     public async consumer(msg: BaseEvent.Schema) {
+        console.log("🚀 ~ file: event-sourcing.service.ts:23 ~ EventSourcingService ~ consumer ~ msg:", msg)
         await this.prismaService.$transaction(async (prisma: PrismaClient) => {
+            
             const prismaEventSourcingProvider = new PrismaEventSourcingProvider(prisma)
             const prismaIdpotenceConsumer = new PrismaIdpotenceConsumer(prisma)
             
@@ -29,6 +31,7 @@ export class EventSourcingService {
 
             await prismaEventSourcingProvider.insertEvent(msg)
             await prismaIdpotenceConsumer.registerEvent(msg.id, EventSourcingService.consumerName)
+  
         })
     }
 }
