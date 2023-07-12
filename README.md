@@ -27,4 +27,4 @@ you can test the api by sending a request of method POST to  `http://localhost:5
 	"username":"any_username"
 }
 ```
-you can log in to the database using the credentials on ´.env´ file and look for the table `event_sourcing`, you will see when you create a user, an event is generated.
+you can log in to the database using the credentials on `.env` file and look for the table `event_sourcing`, you will see when you create a user, an event is generated.
