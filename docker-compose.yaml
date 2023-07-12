@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: discord-bot-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./.rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: micro
+      MYSQL_PASSWORD: password
+    ports:
+      - "33010:3306"
+    volumes:
+      - ./.mysql-data:/var/lib/mysql
+
+volumes:
+  mongodb_data:
+    driver: local
