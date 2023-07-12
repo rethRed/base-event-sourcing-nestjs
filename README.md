@@ -20,11 +20,11 @@ npm run start:dev
 ```
 
 you can test the api by sending a request of method POST to the  `http://localhost:5000` with this request body
-
+```
 {
 	"email": "any_email@gmail.com",
 	"password": "Bany_password1",
 	"username":"any_username"
 }
-
+```
 you can log in to the database using the credentials on ´.env´ file and look for the table ´event_sourcing´, you will see when you create a user, an event is generated.
