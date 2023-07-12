@@ -20,7 +20,6 @@ export class EventSourcingService {
         queue:  EventSourcingService.consumerName
       })
     public async consumer(msg: BaseEvent.Schema) {
-        console.log("🚀 ~ file: event-sourcing.service.ts:23 ~ EventSourcingService ~ consumer ~ msg:", msg)
         await this.prismaService.$transaction(async (prisma: PrismaClient) => {
             
             const prismaEventSourcingProvider = new PrismaEventSourcingProvider(prisma)
